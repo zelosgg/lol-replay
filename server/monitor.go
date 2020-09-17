@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
 	"log"
@@ -32,6 +33,7 @@ var platformToRegion = map[string]string{
 }
 
 type gameInfoMetadata struct {
+	UserID          string
 	BannedChampions []struct {
 		ChampionID int `json:"championId"`
 		PickTurn   int `json:"pickTurn"`
@@ -88,9 +90,11 @@ func monitorPlayers() {
 			continue
 		}
 
+		log.Printf("Monitoring %v users", len(players))
+
 		for _, player := range players {
 			time.Sleep(waitPeriod)
-			log.Println("Trying: " + player.ID)
+			log.Printf("Trying: %v", player.ID)
 			info, ok := currentGameInfo(player, config.RiotAPIKey)
 
 			if !ok {
@@ -132,6 +136,7 @@ func monitorPlayers() {
 
 			cleanUp()
 			recordingsMutex.Unlock()
+			info.UserID = player.ID
 			go recordGame(info, resume)
 		}
 	}
@@ -263,11 +268,25 @@ func recordGame(info gameInfoMetadata, resume bool) {
 	}
 
 	log.Println("recording " + keyName + " complete")
+	go queueJob(info.UserID, info.GameID)
+}
+
+func queueJob(userID string, gameID int64) {
+	url := fmt.Sprintf("%s/api/v1/add-job", config.BackendUrl)
+
+	body, _ := json.Marshal(map[string]interface{}{"userId": userID, "matchId": gameID})
+
+	_, err := http.Post(url, "application/json", bytes.NewBuffer(body))
+	if err != nil {
+		log.Printf("Error: %v", err)
+		return
+	}
+	log.Printf("Queued up a job for user %v and match %v", userID, gameID)
 }
 
 func currentGameInfo(p db.Player, apiKey string) (gameInfoMetadata, bool) {
 	url := "https://" + strings.ToLower(p.Platform) +
-		".api.riotgames.com/lol/spectator/v4/active-games/by-summoner/" + p.ID +
+		".api.riotgames.com/lol/spectator/v4/active-games/by-summoner/" + p.SummonerID +
 		"?api_key=" + apiKey
 
 	for i := 0; i < 3; i++ {

@@ -13,8 +13,9 @@ type DB struct {
 }
 
 type Player struct {
-	ID       string `json:"id"`
-	Platform string `json:"platform"`
+	ID         string `json:"id"`
+	SummonerID string `json:"summoner_id"`
+	Platform   string `json:"platform"`
 }
 
 func New(postgresUrl string) (*DB, error) {
@@ -27,7 +28,7 @@ func New(postgresUrl string) (*DB, error) {
 
 func (d *DB) GetUsers() ([]Player, error) {
 	rows, err := d.conn.Query(context.Background(), `
-		SELECT params ->> 'region', params ->> 'summonerId'
+		SELECT third_party_accounts.user_id, params ->> 'region', params ->> 'summonerId'
 		FROM third_party_accounts
 		INNER JOIN users_roles ON users_roles.user_id = third_party_accounts.user_id
 		WHERE third_party_accounts.type = 'league' AND users_roles.role = 'clip'
@@ -38,14 +39,15 @@ func (d *DB) GetUsers() ([]Player, error) {
 
 	var players []Player
 	for rows.Next() {
-		var region, accountId string
-		err = rows.Scan(&region, &accountId)
+		var id, region, summonerId string
+		err = rows.Scan(&id, &region, &summonerId)
 		if err != nil {
 			fmt.Fprintf(os.Stderr, "Error reading rows: %v\n", err)
 		}
 		players = append(players, Player{
-			ID:       accountId,
-			Platform: region,
+			ID:         id,
+			Platform:   region,
+			SummonerID: summonerId,
 		})
 	}
 	return players, nil

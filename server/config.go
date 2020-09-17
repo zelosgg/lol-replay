@@ -23,6 +23,7 @@ type configuration struct {
 	ShowPerPage         int            `json:"show_per_page"`
 	ShowReplayPortAs    int            `json:"show_replay_port_as"`
 	PostgresUrl         string         `json:"postgres_url"`
+	BackendUrl          string         `json:"backend_url"`
 }
 
 var config configuration
