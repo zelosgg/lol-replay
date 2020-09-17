@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"fmt"
 	"log"
 	"net/http"
 	"os"
@@ -11,6 +12,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/1lann/lol-replay/db"
 	"github.com/1lann/lol-replay/record"
 	"github.com/1lann/lol-replay/recording"
 )
@@ -67,15 +69,29 @@ type gameInfoMetadata struct {
 }
 
 func monitorPlayers() {
+	db, err := db.New(config.PostgresUrl)
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "Unable to connect to database: %v\n", err)
+		os.Exit(1)
+	}
+	defer db.Close()
+
 	waitSeconds := float64(config.RefreshRate) / float64(len(config.Players))
 	waitPeriod := time.Millisecond * time.Duration(waitSeconds*1000.0)
 	log.Println("Monitoring...")
 
 	for {
-		for _, player := range config.Players {
+		players, err := db.GetUsers()
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "Error getting users: %v\n", err)
+			time.Sleep(time.Second)
+			continue
+		}
+
+		for _, player := range players {
 			time.Sleep(waitPeriod)
 			log.Println("Trying: " + player.ID)
-			info, ok := player.currentGameInfo(config.RiotAPIKey)
+			info, ok := currentGameInfo(player, config.RiotAPIKey)
 
 			if !ok {
 				log.Println("Ops., got a problem...")
@@ -249,7 +265,7 @@ func recordGame(info gameInfoMetadata, resume bool) {
 	log.Println("recording " + keyName + " complete")
 }
 
-func (p configPlayer) currentGameInfo(apiKey string) (gameInfoMetadata, bool) {
+func currentGameInfo(p db.Player, apiKey string) (gameInfoMetadata, bool) {
 	url := "https://" + strings.ToLower(p.Platform) +
 		".api.riotgames.com/lol/spectator/v4/active-games/by-summoner/" + p.ID +
 		"?api_key=" + apiKey

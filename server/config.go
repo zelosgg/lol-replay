@@ -22,6 +22,7 @@ type configuration struct {
 	KeepNumRecordings   int            `json:"keep_num_recordings"`
 	ShowPerPage         int            `json:"show_per_page"`
 	ShowReplayPortAs    int            `json:"show_replay_port_as"`
+	PostgresUrl         string         `json:"postgres_url"`
 }
 
 var config configuration
