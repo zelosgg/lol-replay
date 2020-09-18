@@ -268,13 +268,17 @@ func recordGame(info gameInfoMetadata, resume bool) {
 	}
 
 	log.Println("recording " + keyName + " complete")
-	go queueJob(info.UserID, info.GameID)
+	go queueJob(info.UserID, info.GameID, info.Observers.EncryptionKey)
 }
 
-func queueJob(userID string, gameID int64) {
+func queueJob(userID string, gameID int64, key string) {
 	url := fmt.Sprintf("%s/api/v1/add-job", config.BackendUrl)
 
-	body, _ := json.Marshal(map[string]interface{}{"userId": userID, "matchId": gameID})
+	body, _ := json.Marshal(map[string]interface{}{
+		"userId":  userID,
+		"matchId": gameID,
+		"key":     key,
+	})
 
 	_, err := http.Post(url, "application/json", bytes.NewBuffer(body))
 	if err != nil {
