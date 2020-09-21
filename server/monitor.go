@@ -98,7 +98,7 @@ func monitorPlayers() {
 			info, ok := currentGameInfo(player, config.RiotAPIKey)
 
 			if !ok {
-				log.Println("Ops., got a problem...")
+				log.Println("Player not in a game...")
 				continue
 			}
 
