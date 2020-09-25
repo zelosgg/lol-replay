@@ -28,10 +28,10 @@ func New(postgresUrl string) (*DB, error) {
 
 func (d *DB) GetUsers() ([]Player, error) {
 	rows, err := d.conn.Query(context.Background(), `
-		SELECT third_party_accounts.user_id, params ->> 'region', params ->> 'summonerId'
+		SELECT third_party_accounts.user_id, params ->> 'region', params ->> 'id'
 		FROM third_party_accounts
 		INNER JOIN users_roles ON users_roles.user_id = third_party_accounts.user_id
-		WHERE third_party_accounts.type = 'league' AND users_roles.role = 'clip'
+		WHERE third_party_accounts.type = 'league'
 	`)
 	if err != nil {
 		return nil, err
