@@ -272,7 +272,7 @@ func recordGame(info gameInfoMetadata, resume bool) {
 }
 
 func queueJob(userID string, gameID int64, key string) {
-	url := fmt.Sprintf("%s/api/v1/add-job", config.BackendUrl)
+	url := fmt.Sprintf("%s/api/v1/replay/new", config.BackendUrl)
 
 	body, _ := json.Marshal(map[string]interface{}{
 		"userId":  userID,
