@@ -7,7 +7,7 @@ ls
 git status
 git checkout master
 git status
-git remote add origin git@github.com:zelosgg/lol-replay.git
+git remote add origin https://github.com/zelosgg/lol-replay.git
 git remote show
 git remote show origin
 go get -v -u ./server
