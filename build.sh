@@ -5,5 +5,7 @@ cd $GOPATH/src/github.com/1lann/lol-replay
 pwd
 ls
 git status
+git checkout master
+git status
 go get -v -u ./server
 go build -o ./app ./server
