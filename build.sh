@@ -7,6 +7,7 @@ ls
 git status
 git checkout master
 git status
-git branch --set-upstream-to=origin/master master
+git remote show
+git remote show origin
 go get -v -u ./server
 go build -o ./app ./server
