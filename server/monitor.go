@@ -78,12 +78,11 @@ func monitorPlayers() {
 	}
 	defer db.Close()
 
-	waitSeconds := float64(config.RefreshRate) / float64(len(config.Players))
-	waitPeriod := time.Millisecond * time.Duration(waitSeconds*1000.0)
-	log.Println("Monitoring...")
-
 	for {
 		players, err := db.GetUsers()
+		waitSeconds := float64(config.RefreshRate) / float64(len(players))
+		waitPeriod := time.Millisecond * time.Duration(waitSeconds*1000.0)
+
 		if err != nil {
 			fmt.Fprintf(os.Stderr, "Error getting users: %v\n", err)
 			time.Sleep(time.Second)
@@ -102,7 +101,6 @@ func monitorPlayers() {
 				continue
 			}
 
-			log.Printf("Recording for player: %v", player.ID)
 			gameID := strconv.FormatInt(info.GameID, 10)
 			keyName := info.PlatformID + "_" + gameID
 			resume := false
@@ -138,6 +136,7 @@ func monitorPlayers() {
 			cleanUp()
 			recordingsMutex.Unlock()
 			info.UserID = player.ID
+			log.Printf("Recording for player: %v", player.ID)
 			go recordGame(info, resume)
 		}
 	}
