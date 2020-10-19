@@ -285,7 +285,7 @@ func queueJob(userID string, gameID int64, key string) {
 		log.Printf("Error queuing up job: %v", err)
 		return
 	}
-	log.Printf("Queued up a job for user %v and match %v", userID, gameID)
+	log.Printf("Queued up a job for user %v, match %v, and key %v", userID, gameID, key)
 }
 
 func currentGameInfo(p db.Player, apiKey string) (gameInfoMetadata, bool) {
