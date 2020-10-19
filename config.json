@@ -7,5 +7,6 @@
 	"refresh_rate_seconds": 30,
 	"keep_num_recordings": 100,
 	"show_per_page": 20,
-	"show_replay_port_as": 9000
+	"show_replay_port_as": 9000,
+	"admin_key": "D300A047-F994-488F-A9F5-4C4C9ECF891"
 }

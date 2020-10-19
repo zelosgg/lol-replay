@@ -272,7 +272,7 @@ func recordGame(info gameInfoMetadata, resume bool) {
 }
 
 func queueJob(userID string, gameID int64, key string) {
-	url := fmt.Sprintf("%s/api/v1/replay/new", config.BackendUrl)
+	url := fmt.Sprintf("%s/api/v1/replay/new?apikey=%s", config.BackendUrl, config.AdminKey)
 
 	body, _ := json.Marshal(map[string]interface{}{
 		"userId":  userID,
@@ -285,7 +285,7 @@ func queueJob(userID string, gameID int64, key string) {
 		log.Printf("Error queuing up job: %v", err)
 		return
 	}
-	log.Printf("Queued up a job for user %v, match %v, and key %v", userID, gameID, key)
+	log.Printf("Queued up a job for user %v, match %v, and key %v at %v", userID, gameID, key, url)
 }
 
 func currentGameInfo(p db.Player, apiKey string) (gameInfoMetadata, bool) {

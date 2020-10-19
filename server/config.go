@@ -24,6 +24,7 @@ type configuration struct {
 	ShowReplayPortAs    int            `json:"show_replay_port_as"`
 	PostgresUrl         string         `json:"postgres_url"`
 	BackendUrl          string         `json:"backend_url"`
+	AdminKey            string         `json:"admin_key"`
 }
 
 var config configuration
