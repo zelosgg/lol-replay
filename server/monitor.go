@@ -90,18 +90,19 @@ func monitorPlayers() {
 			continue
 		}
 
-		log.Printf("Monitoring %v users", len(players))
+		// log.Printf("Monitoring %v users", len(players))
 
 		for _, player := range players {
 			time.Sleep(waitPeriod)
-			log.Printf("Trying: %v", player.ID)
+			// log.Printf("Trying: %v", player.ID)
 			info, ok := currentGameInfo(player, config.RiotAPIKey)
 
 			if !ok {
-				log.Println("Player not in a game...")
+				// log.Println("Player not in a game...")
 				continue
 			}
 
+			log.Printf("Recording for player: %v", player.ID)
 			gameID := strconv.FormatInt(info.GameID, 10)
 			keyName := info.PlatformID + "_" + gameID
 			resume := false
@@ -282,7 +283,7 @@ func queueJob(userID string, gameID int64, key string) {
 
 	_, err := http.Post(url, "application/json", bytes.NewBuffer(body))
 	if err != nil {
-		log.Printf("Error: %v", err)
+		log.Printf("Error queuing up job: %v", err)
 		return
 	}
 	log.Printf("Queued up a job for user %v and match %v", userID, gameID)
