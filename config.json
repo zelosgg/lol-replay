@@ -2,11 +2,11 @@
 	"postgres_url": "postgresql://postgres:jECwxWQvychH5icKD8v327PZ@zelos-beta.chbhnz1dvnud.us-west-2.rds.amazonaws.com:5432/zelos",
 	"backend_url": "https://beta-backend.onrender.com",
 	"recordings_directory": "/var/data/recordings",
-	"bind_address": "0.0.0.0:10000",
+	"bind_address": "0.0.0.0:80",
 	"riot_api_key": "RGAPI-2a6ef331-90d7-4c13-b9c0-641fd850a783",
 	"refresh_rate_seconds": 30,
 	"keep_num_recordings": 100,
 	"show_per_page": 20,
-	"show_replay_port_as": 9000,
+	"show_replay_port_as": 80,
 	"admin_key": "D300A047-F994-488F-A9F5-4C4C9ECF891"
 }
