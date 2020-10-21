@@ -1,4 +1,4 @@
 *.glr
 .DS_Store
-application
-aws-bundle.zip
+aws/application
+aws/aws-bundle.zip
