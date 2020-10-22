@@ -5,7 +5,7 @@
 	"bind_address": "0.0.0.0:5000",
 	"riot_api_key": "RGAPI-2a6ef331-90d7-4c13-b9c0-641fd850a783",
 	"refresh_rate_seconds": 30,
-	"keep_num_recordings": 100,
+	"keep_num_recordings": 10000000,
 	"show_per_page": 20,
 	"show_replay_port_as": 5000,
 	"admin_key": "D300A047-F994-488F-A9F5-4C4C9ECF891"
