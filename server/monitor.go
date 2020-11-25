@@ -144,8 +144,19 @@ func monitorPlayers() {
 
 // recordingsMutex must be Locked before cleanUp is called.
 func cleanUp() {
-	for len(recordings) >= config.KeepNumRecordings {
+	for i := 0; i < len(recordings); i++ {
 		deleteRecording := sortedRecordings[0]
+
+		// Since the recordings are already sorted from oldest to newest,
+		// we can break the loop as soon as we find a recording that's not old
+		// enough to be deleted
+		now := time.Now()
+		recordTime := deleteRecording.rec.RetrieveGameInfo().RecordTime
+		age := now.Sub(recordTime)
+		if age < time.Duration(config.KeepRecordingsDays*24)*time.Hour {
+			break
+		}
+
 		deleteRecording.rec.Lock()
 		deleteRecording.temporary = true
 		deleteRecording.file.Close()

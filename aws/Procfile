@@ -1,1 +1,1 @@
-web: echo $(pwd) && echo $(ls) && ./application
+web: echo $(pwd) && echo $(ls) && ulimit -Sn unlimited && ./application
