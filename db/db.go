@@ -42,6 +42,7 @@ func (d *DB) GetUsers() ([]Player, error) {
 		err = rows.Scan(&id, &region, &summonerId)
 		if err != nil {
 			fmt.Fprintf(os.Stderr, "Error reading rows: %v\n", err)
+			continue
 		}
 		players = append(players, Player{
 			ID:         id,
