@@ -26,12 +26,12 @@ func New(postgresUrl string) (*DB, error) {
 	return &DB{dbpool}, nil
 }
 
-func (d *DB) GetUsers() ([]Player, error) {
-	rows, err := d.conn.Query(context.Background(), `
+func (d *DB) GetUsers(shard int, totalShards int) ([]Player, error) {
+	rows, err := d.conn.Query(context.Background(), fmt.Sprintf(`
 		SELECT third_party_accounts.user_id, params ->> 'region', params ->> 'id'
 		FROM third_party_accounts
-		WHERE third_party_accounts.type = 'league'
-	`)
+		WHERE third_party_accounts.type = 'league' AND MOD(third_party_accounts.id, %v) = %v
+	`, totalShards, shard))
 	if err != nil {
 		return nil, err
 	}

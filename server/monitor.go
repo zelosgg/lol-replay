@@ -79,7 +79,8 @@ func monitorPlayers() {
 	defer db.Close()
 
 	for {
-		players, err := db.GetUsers()
+		players, err := db.GetUsers(config.Shard, config.TotalShards)
+		log.Printf("Processing %v players\n", len(players))
 		waitSeconds := float64(config.RefreshRate) / float64(len(players))
 		waitPeriod := time.Millisecond * time.Duration(waitSeconds*1000.0)
 
@@ -145,6 +146,9 @@ func monitorPlayers() {
 // recordingsMutex must be Locked before cleanUp is called.
 func cleanUp() {
 	for i := 0; i < len(recordings); i++ {
+		if len(sortedRecordings) <= 0 {
+			continue
+		}
 		deleteRecording := sortedRecordings[0]
 
 		// Since the recordings are already sorted from oldest to newest,
@@ -289,6 +293,7 @@ func queueJob(userID string, gameID int64, key string) {
 		"userId":  userID,
 		"matchId": gameID,
 		"key":     key,
+		"shard":   config.Shard,
 	})
 
 	_, err := http.Post(url, "application/json", bytes.NewBuffer(body))

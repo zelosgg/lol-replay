@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"log"
 	"os"
+	"strconv"
 )
 
 type configPlayer struct {
@@ -23,6 +24,8 @@ type configuration struct {
 	BackendUrl          string         `json:"backend_url"`
 	AdminKey            string         `json:"admin_key"`
 	KeepRecordingsDays  int            `json:"keep_recordings_days"`
+	TotalShards         int            `json:"total_shards"`
+	Shard               int            `json:"shard"`
 }
 
 var config configuration
@@ -46,4 +49,21 @@ func readConfiguration(location string) {
 	if config.KeepRecordingsDays == 0 {
 		config.KeepRecordingsDays = 30
 	}
+
+	if config.TotalShards == 0 {
+		// TODO: we should honestly just use environment variables for all the config values
+		totalShards, err := strconv.Atoi(os.Getenv("REPLAY_TOTAL_SHARDS"))
+		if err == nil {
+			config.TotalShards = totalShards
+		}
+	}
+
+	if config.Shard == 0 {
+		shard, err := strconv.Atoi(os.Getenv("REPLAY_SHARD"))
+		if err == nil {
+			config.Shard = shard
+		}
+	}
+
+	log.Printf("Loading configuration for shard %v\n", config.Shard)
 }
