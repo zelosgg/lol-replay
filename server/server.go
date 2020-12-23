@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -58,19 +59,23 @@ func retrieve(region, gameID string) *recording.Recording {
 		return nil
 	}
 
-	recordingsMutex.RLock()
-	defer recordingsMutex.RUnlock()
+	recordingFilename := fmt.Sprintf("%s_%s.glr", region, gameID)
+	recordingPath := path.Join(config.RecordingsDirectory, recordingFilename)
 
-	internalRec, found := recordings[region+"_"+gameID]
-	if !found {
+	file, err := os.OpenFile(recordingPath, os.O_RDWR, 0666)
+	if err != nil {
+		log.Println("failed to open "+recordingFilename+":", err)
 		return nil
 	}
 
-	if internalRec.temporary {
+	rec, err := recording.NewRecording(file)
+	if err != nil {
+		log.Println("failed to read recording "+recordingFilename+":", err)
+		file.Close()
 		return nil
 	}
 
-	return internalRec.rec
+	return rec
 }
 
 func (s *internalServer) ServeHTTP(w http.ResponseWriter, r *http.Request) {
@@ -138,14 +143,14 @@ func main() {
 
 	readConfiguration(configLocation)
 
-	dir, err := ioutil.ReadDir(config.RecordingsDirectory)
+	_, err := ioutil.ReadDir(config.RecordingsDirectory)
 	if os.IsNotExist(err) {
 		os.Mkdir(config.RecordingsDirectory, 0755)
 	} else if err != nil {
 		log.Fatal(err)
 		return
 	} else {
-		loadRecordings(dir, config.RecordingsDirectory)
+		// loadRecordings(dir, config.RecordingsDirectory)
 	}
 
 	internal := &internalServer{replay.Router(retrieve)}
