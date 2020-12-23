@@ -1,5 +1,5 @@
 {
-	"postgres_url": "postgresql://postgres:jECwxWQvychH5icKD8v327PZ@zelos-beta.chbhnz1dvnud.us-west-2.rds.amazonaws.com:5432/zelos",
+	"postgres_url": "postgresql://postgres:jECwxWQvychH5icKD8v327PZ@sage-prod.chbhnz1dvnud.us-west-2.rds.amazonaws.com:5432/zelos",
         "backend_url": "https://beta-backend.onrender.com",
 	"recordings_directory": "/data",
 	"bind_address": "0.0.0.0:5000",
